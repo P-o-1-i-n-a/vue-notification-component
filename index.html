@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"> <!-- кодировка страницы -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- адаптивность под экраны -->
+  <title>Vue.js Notification Component</title> <!-- заголовок вкладки -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.min.css"> <!-- подключаем semantic ui для готовых стилей -->
+</head>
+
+<body>
+
+  <div id="app" class="ui container"> <!-- корневой элемент приложения -->
+    <h1>My Notifications</h1> <!-- заголовок страницы -->
+
+    <app-notification type="success" title="Great!">
+      <p>Your order has been placed <b>successfully</b></p>
+    </app-notification> <!-- уведомление об успехе, текст передаём через слот -->
+
+    <app-notification type="error" title="Something went wrong">
+      <p>We could not process your payment</p>
+    </app-notification> <!-- уведомление об ошибке -->
+
+    <app-notification type="warning" title="Heads up">
+      <p>Your session will expire in 5 minutes</p>
+    </app-notification> <!-- предупреждающее уведомление -->
+
+    <app-notification>
+      <p>Have a nice day!</p>
+    </app-notification> <!-- уведомление без указанных пропсов, используются значения по умолчанию -->
+  </div>
+
+  <!-- шаблон компонента уведомления, вынесен отдельным тегом script -->
+  <script type="text/x-template" id="app-notification-template">
+    <!-- допустимые типы: info, warning, error, success -->
+    <div class="ui message" :class="type" v-if="!is_hidden">
+      <i class="close icon" @click="hide_notification"></i> <!-- иконка закрытия, по клику скрываем уведомление -->
+      <div class="header">
+        {{ title }} <!-- заголовок уведомления, приходит через пропс -->
+      </div>
+      <slot></slot> <!-- сюда попадает содержимое, переданное между тегами app-notification -->
+    </div>
+  </script>
+
+  <script src="https://unpkg.com/vue@3"></script> <!-- подключаем vue 3 через cdn -->
+  <script>
+
+    Vue.createApp({}) // создаём корневое приложение без собственных данных
+      .component('app-notification', { // регистрируем глобальный компонент уведомления
+        template: '#app-notification-template', // берём разметку из тега script выше
+        props: {
+          type: { type: String, default: 'info' }, // тип уведомления, влияет на цвет через class
+          title: { type: String, default: 'Notification' } // заголовок уведомления
+        },
+        data() {
+          return {
+            is_hidden: false // флаг, скрыто ли уведомление на данный момент
+          }
+        },
+        methods: {
+          hide_notification() { // скрывает уведомление при клике на крестик
+            this.is_hidden = true
+          }
+        }
+      })
+      .mount('#app') // монтируем приложение в элемент с id app
+
+  </script>
+</body>
+
+</html>
